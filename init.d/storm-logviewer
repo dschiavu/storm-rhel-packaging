@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 ### BEGIN INIT INFO
-# Provides: $storm-drpc
+# Provides: $storm-logviewer
 ### END INIT INFO
 
 # Source function library.
@@ -9,11 +9,11 @@
 RETVAL=0
 
 STORM_USER=root
-PID_FILE="/var/run/storm-drpc.pid"
+PID_FILE="/var/run/storm-logviewer.pid"
 
 STORM_HOME="/opt/storm"
 LIB="$STORM_HOME/lib"
-#STORM_JAR=($STORM_HOME/storm-*.jar)  ## doesn't work!?
+#STORM_JAR=($STORM_HOME/storm-*.jar)
 STORM_JAR=`echo $STORM_HOME/storm-*.jar | tr [:space:] :`
 STORM_CONF="$STORM_HOME/conf"
 STORM_LOG="$STORM_HOME/logback"
@@ -21,21 +21,20 @@ STORM_LOG="$STORM_HOME/logback"
 CLASSPATH="$LIB/*:$STORM_JAR:$STORM_CONF:$STORM_LOG"
 
 JVM_TYPE="server"
-DRPC_JVM_MEMORY="1024m"
-DRPC_JVM_OPTS=""
+LOGVIEWER_JVM_MEMORY="1024m"
+LOGVIEWER_JVM_OPTS=""
 
 # Source config
 . /etc/sysconfig/storm
 
 start() {
     if storm_status $PID_FILE; then
-	echo "Error storm DRPC server instance already running"
+	echo "Error storm logviewer instance already running"
 	exit 1
     else
-	echo "Starting storm DRPC..."
+	echo "Starting storm logviewer..."
     fi 
-    STORM_CMD="java -$JVM_TYPE -Xmx$DRPC_JVM_MEMORY -Djava.library.path=\"$JAVA_LIBRARY_PATH\" -Dstorm.options=\"$STORM_OPTIONS\" -Dstorm.home=\"$STORM_HOME\" -Dlogfile.name=drpc.log -Dlogback.configurationFile=$STORM_HOME/logback/cluster.xml $DRPC_JVM_OPTS -cp \"$CLASSPATH\" backtype.storm.daemon.drpc &"
-    echo $STORM_CMD
+    STORM_CMD="java -$JVM_TYPE -Xmx$LOGVIEWER_JVM_MEMORY -Djava.library.path=\"$JAVA_LIBRARY_PATH\" -Dstorm.options=\"$STORM_OPTIONS\" -Dstorm.home=\"$STORM_HOME\" -Dlogfile.name=logviewer.log -Dlogback.configurationFile=$STORM_HOME/logback/cluster.xml $LOGVIEWER_JVM_OPTS -cp \"$CLASSPATH\" backtype.storm.daemon.logviewer &"
     daemon "$STORM_CMD > /dev/null && echo \$! > $PID_FILE"
     RETVAL=$?
     print_storm_status $PID_FILE
@@ -44,9 +43,9 @@ start() {
 
 stop() {
     if storm_status $PID_FILE; then
-        echo "Stopping storm DRPC server..."
+        echo "Stopping storm logviewer..."
     else
-        echo "Storm DRPC server is not running."
+        echo "Storm supervisor is not running."
 	exit 1
     fi
     killproc -p $PID_FILE -TERM
@@ -56,7 +55,7 @@ stop() {
 
 storm_check_pid() {
     local pid=$1
-    ps -fp $pid | grep $pid | grep drpc > /dev/null 2>&1
+    ps -fp $pid | grep $pid | grep logviewer > /dev/null 2>&1
 }
 
 storm_status() {
@@ -75,9 +74,9 @@ storm_status() {
 
 print_storm_status() {
     if storm_status $PID_FILE; then
-        echo "Storm DRPC is running."	
+        echo "Storm logviewer is running."	
     else
-	echo "Storm DRPC is stopped."
+	echo "Storm logviewer is stopped."
      fi
 }
 
