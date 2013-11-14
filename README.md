@@ -2,9 +2,9 @@ Changes
 
 * Fixed some minor bugs in the `init` scripts
 
-* Added support for the Storm DRPC service (`init` scripts and Monit configuration)
+* Added support for the Storm DRPC and Logviewer servers (`init` scripts and Monit configuration)
 
-* Added logback logger configuration, which has replaced the log4j
+* Added Logback logger configuration, which has replaced the Log4J
   logger in newer Storm builds (Storm >= 0.9.0-wip21)
 
 -------
