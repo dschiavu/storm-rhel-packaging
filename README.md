@@ -1,3 +1,14 @@
+Changes
+
+* Fixed some minor bugs in the `init` scripts
+
+* Added support for the Storm DRPC service (`init` scripts and Monit configuration)
+
+* Added logback logger configuration, which has replaced the log4j
+  logger in newer Storm builds (Storm >= 0.9.0-wip21)
+
+-------
+
 storm-rhel-packaging
 ====================
 
